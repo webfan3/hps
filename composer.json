@@ -2,7 +2,7 @@
 	"name" : "webfan3/hps",
 	"require":
 	{
-		"php": ">=5.3.2",
+		"php": ">=5.6.2",
 		"frdl/frdlweb" : "dev-master"
 	},
 
