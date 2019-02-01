@@ -2,7 +2,7 @@
 	"name" : "webfan3/hps",
 	"require":
 	{
-		"frdl/frdlweb" : "dev-master"
+		
 	},
 
 	"require-dev":
