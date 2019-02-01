@@ -1,0 +1,38 @@
+{
+	"name" : "webfan3/hps",
+	"require":
+	{
+		"frdl/frdlweb" : "dev-master"
+	},
+
+	"require-dev":
+	{
+
+	},
+
+	"suggest":
+	{
+		"php": ">=7.1.5"
+	},
+
+	"conflict":
+	{
+
+	},
+
+	"provide" :
+	{
+	
+	},
+
+	"autoload":
+	{
+		"files": [
+
+		],
+		"psr-4":
+		{
+			"webfan\\hps\\" : "src/webfan/hps/"
+		}
+	}
+}
