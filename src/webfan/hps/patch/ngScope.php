@@ -96,19 +96,23 @@ class ngScope extends \ArrayObject
 
         public function offsetGet($name) {
                 self::sdprintf("%s(%s)\n", __FUNCTION__, implode(",", func_get_args()));
-                return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+           //     return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+			 return parent::offsetGet($name);
         }
         public function offsetSet($name, $value) {
                 self::sdprintf("%s(%s)\n", __FUNCTION__, implode(",", func_get_args()));
-                return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+           //     return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+			return parent::offsetSet($name, $value);
         }
         public function offsetExists($name) {
                 self::sdprintf("%s(%s)\n", __FUNCTION__, implode(",", func_get_args()));
-                return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+                //return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+			return parent::offsetExists($name);
         }
         public function offsetUnset($name) {
                 self::sdprintf("%s(%s)\n", __FUNCTION__, implode(",", func_get_args()));
-                return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+              //  return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
+			 return parent::offsetUnset($name);
         } 	
 	
 	
