@@ -1,8 +1,9 @@
 {
 	"name" : "webfan3/hps",
+	"license" : "MIT",
 	"require":
 	{
-		"php": ">=5.6.2"
+		"php": ">=7.2"
 	},
 
 	"require-dev":
