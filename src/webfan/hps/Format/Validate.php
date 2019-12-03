@@ -1,10 +1,10 @@
 <?php
 /**
-
-
-          class Validate extends/based on....:
-
-
+*
+*
+*          Validate extends/based on....:
+*
+*
 *  class valFormats
 *  by T. Wehowski http://www.webfan.de
 *  License: Do What The Fuck You Want To Public License, some funcs
