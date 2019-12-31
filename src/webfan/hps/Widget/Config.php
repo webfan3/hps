@@ -9,6 +9,8 @@ Copyright (c) 2019 Webfan Homepagesystem
 
 https://github.com/webfan3/hps/tree/master/src/webfan/hps/Widget/Config.php
 */
+use webfan\hps\Format\DataUri;
+
 class Config
 {
 	protected $configUrl = null;
@@ -104,7 +106,7 @@ class Config
 					 if('data:' === substr($c, 0, strlen('data:') ) ){
 						 $this->favicon = $c;
 					 }else{
-			             $icon = new \webfan\hps\Format\DataUri('image/x-icon',base64_encode($c), 'base64');  
+			             $icon = new DataUri('image/x-icon',base64_encode($c), DataUri::ENCODING_BASE64);  
 					     $this->favicon = ''.$icon;
 				     }
 					break; 
