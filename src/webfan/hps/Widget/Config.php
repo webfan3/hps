@@ -106,7 +106,8 @@ class Config
 					 if('data:' === substr($c, 0, strlen('data:') ) ){
 						 $this->favicon = $c;
 					 }else{
-			             $icon = new DataUri('image/x-icon',base64_encode($c), DataUri::ENCODING_BASE64);  
+                          //  $icon = new DataUri('image/x-icon',base64_encode($c), null);  
+						 $icon = DataUri::create('image/x-icon', $c, DataUri::ENCODING_BASE64);
 					     $this->favicon = ''.$icon;
 				     }
 					break; 
