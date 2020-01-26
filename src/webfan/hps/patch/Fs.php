@@ -5,6 +5,54 @@
 namespace webfan\hps\patch;
 class Fs
 {
+	  
+	
+	
+ public static function compress($buffer) {
+        /* remove comments */
+        $buffer = preg_replace("/((?:\/\*(?:[^*]|(?:\*+[^*\/]))*\*+\/)|(?:\/\/.*))/", "", $buffer);
+        /* remove tabs, spaces, newlines, etc. */
+        $buffer = str_replace(array("\r\n","\r","\t","\n",'  ','    ','     '), '', $buffer);
+        /* remove other spaces before/after ) */
+        $buffer = preg_replace(array('(( )+\))','(\)( )+)'), ')', $buffer);
+        return $buffer;
+  }
+	
+	
+ public static function filePrune($filename,$maxfilesize = 4096, $pruneStart = true){
+	 
+	 if(filesize($filename) < $maxfilesize){
+		return; 
+	 }
+	 
+	 $maxfilesize = min($maxfilesize, filesize($filename));
+     $maxfilesize = max($maxfilesize, 0);
+	 
+	 if(true!==$pruneStart){
+		 $fp = fopen($filename, "r+");
+         ftruncate($fp, $maxfilesize);
+         fclose($fp);
+		 return;
+	 }
+	 
+        $size=filesize($filename);
+        if ($size<$maxfilesize*1.0) return;
+        $maxfilesize=$maxfilesize*0.5; //we don't want to do it too often...
+        $fh=fopen($filename,"r+");
+        $start=ftell($fh);
+        fseek($fh,-$maxfilesize,SEEK_END);
+        $drop=fgets($fh);
+        $offset=ftell($fh);
+        for ($x=0;$x<$maxfilesize;$x++){
+            fseek($fh,$x+$offset);
+            $c=fgetc($fh);
+            fseek($fh,$x);
+            fwrite($fh,$c);
+        }
+        ftruncate($fh,$maxfilesize-strlen($drop));
+        fclose($fh);
+ }
+	
 	
 public static function getRootDir($path = null){
 	if(null===$path){
