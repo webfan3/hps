@@ -1,36 +1,18 @@
 {
 	"name" : "webfan3/hps",
+	"type" : "frdl-module",
 	"license" : "MIT",
 	"require":
 	{
-		"php": ">=7.2"
+		"php": ">=7.2",
+		"webfan3/php-error-logging" : "*"
 	},
 
-	"require-dev":
-	{
 
-	},
-
-	"suggest":
-	{
-	
-	},
-
-	"conflict":
-	{
-
-	},
-
-	"provide" :
-	{
-	
-	},
 
 	"autoload":
 	{
-		"files": [
 
-		],
 		"psr-4":
 		{
 			"webfan\\hps\\" : "src/webfan/hps/"
