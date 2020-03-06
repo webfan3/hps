@@ -55,7 +55,12 @@ class Process
 	 $file = $this->user('dir');       
        }
 	
-         $uid=\fileowner($file);
+	  if (strtoupper(substr(\PHP_OS, 0, 3)) === 'WIN') {   
+		throw new \Excxeption('User-UIDs are not supported in WINDOWS!');
+	  } 
+	  
+	  
+        $uid=\fileowner($file);
 	  
        if('uid' === $key){
 	 return $uid;       
