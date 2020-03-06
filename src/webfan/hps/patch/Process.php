@@ -47,7 +47,31 @@ class Process
     return (isset($userinfo[$key])) ? $userinfo[$key] : null;	  
   }
  	
-  
+ 	
+	
+	
+  protected function _owner(string $file = null, string $key = null){
+       if(null === $file){
+	 $file = $this->user('dir');       
+       }
+	
+         $uid=\fileowner($file);
+	  
+       if('uid' === $key){
+	 return $uid;       
+       }	  
+	  
+         $userinfo=posix_getpwuid($uid); 
+	  
+       if(null === $key){
+	 return $userinfo;       
+       }	
+	  
+    return (isset($userinfo[$key])) ? $userinfo[$key] : null;	  
+  }
+	
+	
+	
   protected function _is(int $pid = null){   
      if(null === $pid){
        $pid = $this->pid;
