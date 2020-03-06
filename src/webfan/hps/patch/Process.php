@@ -36,8 +36,19 @@ class Process
      }
   }
   
+
+	
+  protected function _user(string $key = null){
+       $userinfo = posix_getpwnam(\get_current_user());  
+       if(null === $key){
+	 return $userinfo;       
+       }
+	  
+    return (isset($userinfo[$key])) ? $userinfo[$key] : null;	  
+  }
+ 	
   
-  public function _is(int $pid = null){   
+  protected function _is(int $pid = null){   
      if(null === $pid){
        $pid = $this->pid;
      }   
@@ -53,7 +64,7 @@ class Process
 
 
   //kill(123,0);
-  public function _kill(int $pid = null,$signal = 0, $recursive = true/* kill childprocesses */) {
+  protected function _kill(int $pid = null,$signal = 0, $recursive = true/* kill childprocesses */) {
     if(null === $pid){
        $pid = $this->pid;
      }   
