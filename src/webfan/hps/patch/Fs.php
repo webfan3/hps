@@ -41,7 +41,7 @@ class Fs
  public static function copy($src, $desDir){
      if(is_dir($src)){
 		 self::copy($src, $desDir);
-	 }elseif(is_file($src){
+	 }elseif(is_file($src)){
 		 self::copyFileToDir($src, $desDir);
 	 }
  }
