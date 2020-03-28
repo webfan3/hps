@@ -1,12 +1,54 @@
 <?php
-
-
-
 namespace webfan\hps\patch;
+
+
+use DirectoryIterator;
+use SplFileInfo;
+
+
 class Fs
 {
-	  
+
+/*https://www.startutorial.com/articles/view/deployment-script-in-php*/	
+ public static function recursiveCopyDir($srcDir, $destDir){
+    foreach (new DirectoryIterator($srcDir) as $fileInfo) {
+        if ($fileInfo->isDot()) {
+            continue;
+        }
+ 
+        if (!file_exists($destDir)) {
+           shell_exec('mkdir -p '.$destDir);
+        }
+ 
+        $copyTo = $destDir . '/' . $fileInfo->getFilename();
+ 
+        copy($fileInfo->getRealPath(), $copyTo);
+    }
+ }
+ 
+ public static function copyFileToDir($src, $desDir){
+    if (!file_exists($desDir)) {
+        shell_exec('mkdir -p '.$desDir);
+    }
+ 
+    $fileInfo = new SplFileInfo($src);
+ 
+    $copyTo = $desDir . '/' . $fileInfo->getFilename();
+ 
+    copy($fileInfo->getRealPath(), $copyTo);
+ }
 	
+ public static function copy($src, $desDir){
+     if(is_dir($src)){
+		 self::copy($src, $desDir);
+	 }elseif(is_file($src){
+		 self::copyFileToDir($src, $desDir);
+	 }
+ }
+	
+ public static function remove($dir){
+    shell_exec('rm -rf '.$dir);
+ }	
 	
  public static function compress($buffer) {
         /* remove comments */
