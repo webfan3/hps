@@ -16,7 +16,7 @@ class MyResponse
 		$r = call_user_func_array([$this->_response, $name], $params);
 		if($r instanceof $this){
 		   return $r;	
-		}elseif(in_array(\Psr\Http\Message\ResponseInterface::class, class_implements($r))){
+		}elseif(is_object($r) && in_array(\Psr\Http\Message\ResponseInterface::class, class_implements($r))){
 		   return new self($r);	
 		}else{
 		   return $r;	
