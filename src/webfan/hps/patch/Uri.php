@@ -141,7 +141,7 @@ class Uri extends \Zend\Diactoros\Uri implements UriInterface
 		
 		
         return $new;
-    }
+    }// : \Psr\Http\Message\UriInterface
 
     
 	protected function filterPath($path)
@@ -167,5 +167,174 @@ class Uri extends \Zend\Diactoros\Uri implements UriInterface
 	
         // Ensure only one leading slash, to prevent XSS attempts.
         return '/' . ltrim($path, '/');
+    }
+	
+	
+	
+	
+	   /** * Parse a URI into its parts, and set the properties * * @param string $uri */
+    protected function parseUri($uri)
+    {
+        $parts = parse_url($uri);
+
+        if (false === $parts) {
+            throw new \InvalidArgumentException(
+                'The source URI string appears to be malformed'
+            );
+        }
+
+        $this->scheme    = isset($parts['scheme']) ? $this->filterScheme($parts['scheme']) : '';
+        $this->userInfo  = isset($parts['user']) ? $this->filterUserInfoPart($parts['user']) : '';
+        $this->host      = isset($parts['host']) ? strtolower($parts['host']) : '';
+        $this->port      = isset($parts['port']) ? $parts['port'] : null;
+        $this->path      = isset($parts['path']) ? $this->filterPath($parts['path']) : '';
+        $this->query     = isset($parts['query']) ? $this->filterQuery($parts['query']) : '';
+        $this->fragment  = isset($parts['fragment']) ? $this->filterFragment($parts['fragment']) : '';
+
+        if (isset($parts['pass'])) {
+            $this->userInfo .= ':' . $parts['pass'];
+        }
+    }
+
+    /** * Create a URI string from its various parts * * @param string $scheme * @param string $authority * @param string $path * @param string $query * @param string $fragment * @return string */
+    protected static function createUriString($scheme, $authority, $path, $query, $fragment)
+    {
+        $uri = '';
+
+        if ('' !== $scheme) {
+            $uri .= sprintf('%s:', $scheme);
+        }
+
+        if ('' !== $authority) {
+            $uri .= '//' . $authority;
+        }
+
+        if ('' !== $path && '/' !== substr($path, 0, 1)) {
+            $path = '/' . $path;
+        }
+
+        $uri .= $path;
+
+
+        if ('' !== $query) {
+            $uri .= sprintf('?%s', $query);
+        }
+
+        if ('' !== $fragment) {
+            $uri .= sprintf('#%s', $fragment);
+        }
+
+
+
+        return $uri;
+    }
+
+    /** * Is a given port non-standard for the current scheme? * * @param string $scheme * @param string $host * @param int $port * @return bool */
+    protected function isNonStandardPort($scheme, $host, $port)
+    {
+        if ('' === $scheme) {
+            return '' === $host || null !== $port;
+        }
+
+        if ('' === $host || null === $port) {
+            return false;
+        }
+
+        return ! isset($this->allowedSchemes[$scheme]) || $port !== $this->allowedSchemes[$scheme];
+    }
+
+    /** * Filters the scheme to ensure it is a valid scheme. * * @param string $scheme Scheme name. * * @return string Filtered scheme. */
+    protected function filterScheme($scheme)
+    {
+        $scheme = strtolower($scheme);
+        $scheme = preg_replace('#:(//)?$#', '', $scheme);
+
+        if ('' === $scheme) {
+            return '';
+        }
+
+        if (! isset($this->allowedSchemes[$scheme])) {
+            throw new InvalidArgumentException(sprintf(
+                'Unsupported scheme "%s"; must be any empty string or in the set (%s)',
+                $scheme,
+                implode(', ', array_keys($this->allowedSchemes))
+            ));
+        }
+
+        return $scheme;
+    }
+
+    /** * Filters a part of user info in a URI to ensure it is properly encoded. * * @param string $part * @return string */
+    protected function filterUserInfoPart($part)
+    {
+        // Note the addition of `%` to initial charset; this allows `|` portion
+        // to match and thus prevent double-encoding.
+        return preg_replace_callback(
+            '/(?:[^%' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . ']+|%(?![A-Fa-f0-9]{2}))/u',
+            [$this, 'urlEncodeChar'],
+            $part
+        );
+    }
+
+ 
+
+    /** * Filter a query string to ensure it is propertly encoded. * * Ensures that the values in the query string are properly urlencoded. * * @param string $query * @return string */
+    protected function filterQuery($query)
+    {
+        if ('' !== $query && strpos($query, '?') === 0) {
+            $query = substr($query, 1);
+        }
+
+        $parts = explode('&', $query);
+        foreach ($parts as $index => $part) {
+            list($key, $value) = $this->splitQueryValue($part);
+            if ($value === null) {
+                $parts[$index] = $this->filterQueryOrFragment($key);
+                continue;
+            }
+            $parts[$index] = sprintf(
+                '%s=%s',
+                $this->filterQueryOrFragment($key),
+                $this->filterQueryOrFragment($value)
+            );
+        }
+
+        return implode('&', $parts);
+    }
+
+    /** * Split a query value into a key/value tuple. * * @param string $value * @return array A value with exactly two elements, key and value */
+    protected function splitQueryValue($value)
+    {
+        $data = explode('=', $value, 2);
+        if (! isset($data[1])) {
+            $data[] = null;
+        }
+        return $data;
+    }
+
+    /** * Filter a fragment value to ensure it is properly encoded. * * @param string $fragment * @return string */
+    protected function filterFragment($fragment)
+    {
+        if ('' !== $fragment && strpos($fragment, '#') === 0) {
+            $fragment = '%23' . substr($fragment, 1);
+        }
+
+        return $this->filterQueryOrFragment($fragment);
+    }
+
+    /** * Filter a query string key or value, or a fragment. * * @param string $value * @return string */
+    protected function filterQueryOrFragment($value)
+    {
+        return preg_replace_callback(
+            '/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/\?]+|%(?![A-Fa-f0-9]{2}))/u',
+            [$this, 'urlEncodeChar'],
+            $value
+        );
+    }
+
+    /** * URL encode a character returned by a regex. * * @param array $matches * @return string */
+    protected function urlEncodeChar(array $matches)
+    {
+        return rawurlencode($matches[0]);
     }
 }
