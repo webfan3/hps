@@ -112,7 +112,7 @@ public static function getRootDir($path = null){
 
 }
 	
-public static function getPathUrl($dir = null){
+public static function getPathUrl($dir = null, $absolute = true){
 	if(null===$dir){
 	//	$dir = dirname($_SERVER['PHP_SELF']);
 		$dir = getcwd();
@@ -124,10 +124,10 @@ public static function getPathUrl($dir = null){
     $dir = str_replace('\\', '/', realpath($dir));
 
     //HTTPS or HTTP
-    $root .= !empty($_SERVER['HTTPS']) ? 'https' : 'http';
+    $root .= ($absolute) ? (!empty($_SERVER['HTTPS']) ? 'https' : 'http') : '';
 
     //HOST
-    $root .= '://' . $_SERVER['HTTP_HOST'];
+    $root .= ($absolute) ? '://' . $_SERVER['HTTP_HOST'] : '';
 
     //ALIAS
     if(!empty($_SERVER['CONTEXT_PREFIX'])) {
