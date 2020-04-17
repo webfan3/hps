@@ -26,32 +26,41 @@ http://www.allseeing-i.com
 class Cookie
 {
 	
-    public $name = "";
-	public $value = "";
-	public $expires = "";
-	public $domain = "";
-	public $path = "";
-	public $secure = false;
+    protected $name = "";
+	protected $value = "";
+	protected $expires = "";
+	protected $domain = "";
+	protected $path = "";
+	protected $secure = false;
 	
-	public $cookies = [];
+	protected $cookies = [];
 	
   /**
   *  @arguments: 
   *       -  [$cookie, int $flags [, array $allowed_extras ]]
-  */ 
+  */  
   public function __construct($cookie = null, $flags = \HTTP_COOKIE_PARSE_RAW,  array $allowed_extras = null){
 	  $this->cookies = [];	
 	  
 	  if(is_string($cookie) ){
-		  $this->http_parse_cookie($cookie, $flags, $allowed_extras);
+		  $this->cookies = self::http_parse_cookie($cookie, $flags, $allowed_extras, $this)->cookies;
 	  }
   }
 	
 	
-  protected function http_parse_cookie($header, $flags = \HTTP_COOKIE_PARSE_RAW,  array $allowed_extras = null) {
-	 $class = get_class($this);
+  public function __get($name){
+	  if(\property_exists($this, $name)  ){
+		return $this->{$name};  
+	  }
 	  
-	 $cookie = $this;
+	  throw new \Exception('Undefined property `'.$name.'` in '.__METHOD__);
+  }
+	
+  public static function http_parse_cookie($header, $flags = \HTTP_COOKIE_PARSE_RAW,  array $allowed_extras = null, ?self &$c = null) :self {
+	 $class = __CLASS__;
+	  
+	// $cookie = $this;
+	  $cookie = ($c instanceof self) ? $c : new self(null, $flags, $allowed_extras);
 	 //$cookie->cookies = [];	  
 	
 	
@@ -79,7 +88,7 @@ class Cookie
 		
 		$key = $new_key;
 	  }
-	 return $cookies;
+	 return $cookie;
    }
 	
 	
@@ -105,4 +114,3 @@ class Cookie
     }	
 	
 }
-
