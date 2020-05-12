@@ -107,7 +107,7 @@ class Uri extends \Zend\Diactoros\Uri implements UriInterface
     private $uriString;
 
 
-    public function withPath($path)
+    public function withPath($path) : UriInterface
     {
         if (! is_string($path)) {
             throw new InvalidArgumentException(
