@@ -1,6 +1,6 @@
 {
 	"name" : "webfan3/hps",
-	"type" : "frdl-module",
+	"type" : "library",
 	"license" : "MIT",
 	"require":
 	{
