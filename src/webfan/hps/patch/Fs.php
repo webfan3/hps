@@ -206,7 +206,8 @@ public static function pruneDir($dir, $limit, $skipDotFiles = true, $remove = fa
     if ($fileinfo->isFile()) {
 		$c++;
 		if(true===$skipDotFiles && '.'===substr($fileinfo->getFilename(),0,1))continue;
-        if($fileinfo->getMTime() < time() - $limit){
+             // if($fileinfo->getMTime() < time() - $limit){
+		if(filemtime($fileinfo->getPathname()) < time() - $limit){
 			if(file_exists($fileinfo->getPathname()) && is_file($fileinfo->getPathname())
 			    && strlen(realpath($fileinfo->getPathname())) > strlen(realpath($dir))
 			  ){
