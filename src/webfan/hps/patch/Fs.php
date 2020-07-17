@@ -8,7 +8,29 @@ use SplFileInfo;
 
 class Fs
 {
-
+	
+	
+ public static function mostRecentModified($dirName,$doRecursive) {
+    $d = dir($dirName);
+    $lastModified = [0, null];
+    while($entry = $d->read()) {
+        if ($entry != "." && $entry != "..") {
+            if (!is_dir($dirName."/".$entry)) {
+                $currentModified = [filemtime($dirName."/".$entry), $dirName."/".$entry];
+            } else if ($doRecursive && is_dir($dirName."/".$entry)) {
+                $currentModified = self::mostRecentModified($dirName."/".$entry,true);
+            }
+            if ($currentModified[0] > $lastModified[0]){
+                $lastModified = $currentModified;
+            }
+        }
+    }
+    $d->close();
+    return $lastModified;
+ }
+	
+	
+	
 /*https://www.startutorial.com/articles/view/deployment-script-in-php*/	
  public static function recursiveCopyDir($srcDir, $destDir){
     foreach (new DirectoryIterator($srcDir) as $fileInfo) {
