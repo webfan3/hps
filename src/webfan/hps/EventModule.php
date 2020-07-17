@@ -33,7 +33,7 @@ class EventModule
          return implode('', $p);	
 	}
 		
-	public function __construct(\string $action, $reload = false){
+	public function __construct(string $action, $reload = false){
         
 		
 		$pathes = explode('\\', $action);
