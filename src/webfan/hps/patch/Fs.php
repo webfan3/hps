@@ -273,4 +273,34 @@ public static function pruneDir($dir, $limit, $skipDotFiles = true, $remove = fa
 
     return $files;
  }
+	
+public static function getCacheDir(string $name = null){
+	   if(null === $name){
+		$name = '';   
+	   }
+	
+	  $name = \preg_replace("/[^A-Za-z0-9\.\-\_\:\@]/", "", $name);
+	 
+		  $_ENV['FRDL_HPS_CACHE_DIR'] = ((isset($_ENV['FRDL_HPS_CACHE_DIR'])) ? $_ENV['FRDL_HPS_CACHE_DIR'] 
+                   : sys_get_temp_dir() . \DIRECTORY_SEPARATOR . get_current_user(). \DIRECTORY_SEPARATOR . 'cache-frdl' . \DIRECTORY_SEPARATOR
+					  );
+	  
+	  
+          $_ENV['FRDL_HPS_PSR4_CACHE_DIR'] = ((isset($_ENV['FRDL_HPS_PSR4_CACHE_DIR'])) ? $_ENV['FRDL_HPS_PSR4_CACHE_DIR'] 
+                   : $_ENV['FRDL_HPS_CACHE_DIR']. 'psr4'. \DIRECTORY_SEPARATOR
+					  );
+ 
+		 
+		  
+ 
+	 
+	 if(!empty($name)){		 
+        $_ENV['FRDL_HPS_'.$name.'_CACHE_DIR'] = ((isset($_ENV['FRDL_HPS_'.$name.'_CACHE_DIR'])) ? $_ENV['FRDL_HPS_'.$name.'_CACHE_DIR'] 
+                   : rtrim($_ENV['FRDL_HPS_CACHE_DIR'],'\\/'). \DIRECTORY_SEPARATOR.$name. \DIRECTORY_SEPARATOR
+					  );			
+	 }
+	 
+	 return (empty($name)) ? $_ENV['FRDL_HPS_CACHE_DIR'] : $_ENV['FRDL_HPS_'.$name.'_CACHE_DIR'];
+   }
+	
 }
