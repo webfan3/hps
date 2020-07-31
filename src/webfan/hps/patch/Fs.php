@@ -9,6 +9,57 @@ use SplFileInfo;
 class Fs
 {
 	
+  /* by https://www.php.net/manual/de/function.chmod.php#105570 */	
+  public static function chmod($path, $filemode, $dirmode, $r = true, &$log = null){
+	if(null === $log){
+	   $log = [];	
+	}
+    if (is_dir($path) ) {
+        if (!chmod($path, $dirmode)) {
+            $dirmode_str=decoct($dirmode);
+            $e =[\E_USER_ERROR,  new \Exception("Failed applying filemode '$dirmode_str' on directory '$path'\n"
+                                  . "  `-> the directory '$path' will be skipped from recursive chmod\n")];
+			$log[] = $e;
+            return $e;
+        }
+	   if(true === $r){
+        $dh = opendir($path);
+        while (($file = readdir($dh)) !== false) {
+            if($file != '.' && $file != '..') { 
+                $fullpath = $path.'/'.$file;
+                self::chmod($fullpath, $filemode,$dirmode, true, $log);
+            }
+        }
+        closedir($dh);
+	   }
+		
+            $dirmode_str=decoct($dirmode);
+            $e =[\E_USER_NOTICE,  "Done applying filemode '$dirmode_str' on directory '$path'\n"];
+			$log[] = $e;
+            return $e;	  		
+		
+    } else {
+        if (is_link($path)) {
+            $e = [\E_USER_NOTICE, new \Exception("link '$path' is skipped\n")];
+			$log[] = $e;
+            return $e;				
+        }
+        if (!chmod($path, $filemode)) {
+            $filemode_str=decoct($filemode);
+            $e = [\E_USER_ERROR, new \Exception("Failed applying filemode '$filemode_str' on file '$path'\n")];
+			$log[] = $e;
+            return $e;						
+        }
+		
+	        
+		    $filemode_str=decoct($filemode);
+            $e =[\E_USER_NOTICE,  "Done applying filemode '$filemode_str' on file '$path'\n"];
+			$log[] = $e;
+            return $e;		
+    } 
+
+} 
+	
 	
  public static function mostRecentModified($dirName,$doRecursive) {
     $d = dir($dirName);
