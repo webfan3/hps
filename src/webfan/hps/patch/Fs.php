@@ -72,7 +72,7 @@ class Fs
     if(null===$doRecursive){
 	$doRecursive=true;    
     }
-    $lastModified = [0, null];
+    $lastModified = [0, null,null];
     while($entry = $d->read()) {
         if ($entry != "." && $entry != "..") {
             if (!is_dir($dirName."/".$entry)) {
