@@ -7,7 +7,7 @@ namespace webfan\hps;
 
 class EventModule2
 {
-	const VERSION = '2.0.2';
+	const VERSION = '3.0.0';
 	
 	const FM = 'frdl%ev%hps'; //filemarker
 	const FM_SPLIT = "/[\%]/";
