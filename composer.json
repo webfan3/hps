@@ -6,7 +6,8 @@
 	{
 		"php": ">=7.2",
 		"webfan3/php-error-logging" : "*",
-		"hidehalo/nanoid-php" : "1.1.6"
+		"hidehalo/nanoid-php" : "1.1.6",
+		"opis/closure": "^3.5"
 	},
 
 
