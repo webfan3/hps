@@ -16,7 +16,8 @@
 
 		"psr-4":
 		{
-			"webfan\\hps\\" : "src/webfan/hps/"
+			"webfan\\hps\\" : "src/webfan/hps/",
+			"Webfan\\Homepagesystem\\EventFlow" : "src/Webfan/Homepagesystem/EventFlow/"
 		}
 	}
 }
