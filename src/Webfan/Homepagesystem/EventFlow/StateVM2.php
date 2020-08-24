@@ -30,10 +30,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
- /**
- * EventEmitter javascript like event based final state object : 
- *    https://github.com/frdl/-Flow/blob/master/api-d/4/js-api/library.js/core/plugin.core.js#L4501
- */
 namespace Webfan\Homepagesystem\EventFlow;
 
 
@@ -48,9 +44,7 @@ class StateVM2 extends State implements \Serializable
 	
   protected $SecretSigningKey = null;
   public $serializeClosures = true;	
-//  protected $tagName = __CLASS__;	
-	
-	
+
 	
   public function on($event, $callback, $obj = null, &$index = null) {
     if (!isset($this->events[$event])) {
@@ -59,16 +53,12 @@ class StateVM2 extends State implements \Serializable
 	  
 	  
  	if(null===$index){
-	//	$bin = new \frdl\webfan\Serialize\Binary\bin;  
-		//$index = $bin->serialize($cb); 
 		$index =  $this->_genKey($callback);
 	}
 	  
 	  
 	  if($obj === null){
 		  if(true===$this->serializeClosures){
-		 //  $serializer = (null=== $this->SecretSigningKey) ? new \SuperClosure\Serializer() : new \SuperClosure\Serializer(null, $this->SecretSigningKey);
-		//   $cb = $serializer->serialize($callback);
 		     $cb = \Opis\Closure\serialize($callback);
 		  }else{
 			   $cb = $callback;
@@ -79,8 +69,7 @@ class StateVM2 extends State implements \Serializable
 	  }	    
 	
 
-   $this->events[$event][$index] = $cb;
-	 //   $this->events[$event][] = $cb;
+    $this->events[$event][$index] = $cb;
     return $this;
   }
   	
@@ -114,8 +103,6 @@ class StateVM2 extends State implements \Serializable
 		
 		
 		if(is_string($callback)){
-			// $serializer = (null=== $this->SecretSigningKey) ? new \SuperClosure\Serializer() : new \SuperClosure\Serializer(null, $this->SecretSigningKey);
-			// $callback = $serializer->unserialize($callback);
 			$callback = \Opis\Closure\unserialize($callback);
 		}	
 		
@@ -123,7 +110,6 @@ class StateVM2 extends State implements \Serializable
 			trigger_error('Cannot trigger Event '.$eventName.' on Listener #'.$indexOf, E_USER_WARNING);
 			continue;
 		} 	
-	//  if(frdl\run($callback, $payload) === false) break;
 	  if(false === call_user_func_array($callback, $payload))break;
 				
 		if($event->isDefaultPrevented()){
@@ -147,22 +133,10 @@ class StateVM2 extends State implements \Serializable
    	  $THAT = $this; 
 	  $k = $this->_genKey($callback);
    	  $callback= ($obj === null) ? $callback : [$obj, $callback];
-		 
-	//  $serializer = (null=== $this->SecretSigningKey) ? new \SuperClosure\Serializer() : new \SuperClosure\Serializer(null, $this->SecretSigningKey);
-	//  $cb = (is_callable($callback)) ? $serializer->serialize($callback) : $callback;
-	   $cb = (is_callable($callback)) ? \Opis\Closure\serialize($callback) : $callback;
-	//  $bin = new \frdl\webfan\Serialize\Binary\bin;  
-	
-	//  	$k = $bin->serialize( $cb );
-	
-		 
+	  $cb = (is_callable($callback)) ? \Opis\Closure\serialize($callback) : $callback;
 		 
        $func =function($event, $THAT, $data) use($cb, $k){
 		    $callback = unserialize($cb);
-   	  	 
-		  //  $THAT->removeEventListener($event, $fn);
-		    //  unset($THAT->events[$event][$k]);
-		  //  $THAT->removeEventListener($event, $k);
 		    $events = $THAT->getEvents();
 		     unset($events[$event][$k]);
 		   $THAT->setEvents($events);
@@ -181,8 +155,6 @@ class StateVM2 extends State implements \Serializable
 	
 	
   protected function _genKey($cb){	 
-	//  $serializer = (null=== $this->SecretSigningKey) ? new \SuperClosure\Serializer() : new \SuperClosure\Serializer(null, $this->SecretSigningKey);
-	//  $cb = (is_callable($cb)) ? $serializer->serialize($cb) : $cb;
 	  $cb = (is_callable($cb)) ? \Opis\Closure\serialize($cb) : $cb;
 	  
 	  
@@ -199,42 +171,25 @@ class StateVM2 extends State implements \Serializable
 	  
 	  $events = $this->events;
 	  
-	   $listener = ($obj === null) ? $callback : array($obj, $callback);
-	  
-     // $serializer = (null=== $this->SecretSigningKey) ? new \SuperClosure\Serializer() : new \SuperClosure\Serializer(null, $this->SecretSigningKey);
+	  $listener = ($obj === null) ? $callback : array($obj, $callback);
 	  $bin = new \frdl\webfan\Serialize\Binary\bin;  
-	  // $sl =(is_callable( $listener )) ? $bin->serialize($serializer->serialize($listener)) : $bin->serialize($listener);
-	//  $sl =(is_callable( $listener )) ? $serializer->serialize($listener) : $listener;
-	   $sl =(is_callable( $listener )) ? \Opis\Closure\serialize($listener) : $listener;
+	  $sl =(is_callable( $listener )) ? \Opis\Closure\serialize($listener) : $listener;
 
-  //   $indexOf = 0;
-	
-	  
- //   foreach ($this->Iterator('Array', $events[$event]) as $indexOf => $EventListener) {
 	  foreach ($events[$event] as $indexOf => $EventListener) {
-		/*
-		if(is_string($listener)&& !is_array($EventListener) && !is_string($EventListener) ){
-			
-			 $EventListener = $serializer->serialize($EventListener);
-		}	
-		*/
+
 			
        if($EventListener ===$sl || $EventListener === $bin->serialize($sl)  || $EventListener === $listener  
 		   || $indexOf === $listener 
 		   || $indexOf === $sl 
 		   || $indexOf === $this->_genKey($callback) 
 		 )	{
-       //  array_splice($this->events[$event], $indexOf, 0);	  
-		   unset($events[$event][$indexOf]);
-		 
-		    
+
+		   unset($events[$event][$indexOf]);	    
 		   
 		   if(0===count($events[$event]))unset($events[$event]);
        
-         //    $indexOf--;
 	   }
-        //    $indexOf++;
-    }
+        }
  
 	   $this->events=$events;
 
@@ -266,8 +221,6 @@ class StateVM2 extends State implements \Serializable
 	
 
     public function serialize() {
-  //      echo "Serializing MyClass...\n";
-    //    return serialize($this->data);
 		$events = $this->events;
 		foreach($events as $name => $listeners){
 		   foreach(	$listeners as $index => $listener){
@@ -276,13 +229,8 @@ class StateVM2 extends State implements \Serializable
 				   $l = function() use($list){
 					 return call_user_func_array($list, func_get_args());  
 				   };   
-				   
-			      // $serializer = (null=== $this->SecretSigningKey) ? new \SuperClosure\Serializer() : new \SuperClosure\Serializer(null, $this->SecretSigningKey);
-			     //  $events[$name][$index] = $serializer->serialize($l);
 				  $events[$name][$index] = \Opis\Closure\serialize($l);
 			   }  elseif( !is_string($listener) ){
-			    //   $serializer = (null=== $this->SecretSigningKey) ? new \SuperClosure\Serializer() : new \SuperClosure\Serializer(null, $this->SecretSigningKey);
-			     //  $events[$name][$index] = $serializer->serialize($listener);
 				 $events[$name][$index] = \Opis\Closure\serialize($listener);
 			  }  else {
 				   
@@ -298,7 +246,6 @@ class StateVM2 extends State implements \Serializable
 		
 		$data = array(
 			'events' => $this->events,
-			//'tagName' => $this->tagName,
 			'name' => $this->name,
 			'context' => $context
 		);	
@@ -309,8 +256,6 @@ class StateVM2 extends State implements \Serializable
    
 	
     public function unserialize($data) {
-     //   echo "Unserializing MyClass...\n";
-     //   $this->data = unserialize($data);
 		$bin = new \frdl\webfan\Serialize\Binary\bin;
 		$data = $bin->unserialize($data);
 		
@@ -319,28 +264,16 @@ class StateVM2 extends State implements \Serializable
 		$this->_context=$data['context'];
 		
 		$this->name = $data['name'];
-		
-		
-		//print_r($data['events']);die();
-		
+
 		foreach($data['events'] as $name => $listeners){
 		   foreach(	$listeners as $index => $listener){
 			   if( !is_string($listener) &&  !is_array($listener) ){
-			     //  $serializer = (null=== $this->SecretSigningKey) ? new \SuperClosure\Serializer() : new \SuperClosure\Serializer(null, $this->SecretSigningKey);
-			     //  $data['events'][$name][$index] = $serializer->unserialize($listener);	
-				   $data['events'][$name][$index] = \Opis\Closure\unserialize($listener);				   
+        			   $data['events'][$name][$index] = \Opis\Closure\unserialize($listener);				   
 			  }  
 		   }
 		}	
 		
 		$this->setEvents($data['events']);		
-		
-		  //if( $this->tagName !== $data['tagName']){
-		   //warning ??? 	
-		  //}		
-		
-		
-		
     }  
 	
 
