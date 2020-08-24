@@ -61,17 +61,29 @@ class Fs
 } 
 	
 	
- public static function mostRecentModified($dirName,$doRecursive) {
+ public static function mostRecentModified(string $dirName,bool $doRecursive=null, array $extensions = null, array $excludeExtensions = null) {
     $d = dir($dirName);
+    if(null === $extensions){
+	$extensions=['*'];    
+    }
+    if(null === $excludeExtensions){
+	$excludeExtensions=[];    
+    }
+    if(null===$doRecursive){
+	$doRecursive=true;    
+    }
     $lastModified = [0, null];
     while($entry = $d->read()) {
         if ($entry != "." && $entry != "..") {
             if (!is_dir($dirName."/".$entry)) {
-                $currentModified = [filemtime($dirName."/".$entry), $dirName."/".$entry];
-            } else if ($doRecursive && is_dir($dirName."/".$entry)) {
-                $currentModified = self::mostRecentModified($dirName."/".$entry,true);
+		$fileInfo = new SplFileInfo($dirName."/".$entry);
+                $currentModified = ['filemtime'=>$fileInfo->getMTime(), 'path'=>$fileInfo->getPathname(), 'extension'=>$fileInfo->getExtension()];
+            } else if (true===$doRecursive && is_dir($dirName."/".$entry)) {
+                $currentModified = self::mostRecentModified($dirName."/".$entry,true,$extensions,$excludeExtensions);
             }
-            if ($currentModified[0] > $lastModified[0]){
+            if ($currentModified['filemtime'] > $lastModified['filemtime']
+	        && (in_array('*', $extensions) || in_array($currentModified['extension'], $extensions)) 
+	        && !in_array($currentModified['extension'], $excludeExtensions)){
                 $lastModified = $currentModified;
             }
         }
