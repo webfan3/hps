@@ -12,7 +12,7 @@ class EventModule2
 	const FM = 'frdl%ev%hps'; //filemarker
 	const FM_SPLIT = "/[\%]/";
 	const MODEL = \Webfan\Homepagesystem\EventFlow\StateVM2::class;
-  protected $action;
+        protected $action;
 	protected static $emitters = [];
 	protected $emitter = null;
 	protected $mark;
