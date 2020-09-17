@@ -313,7 +313,8 @@ public static function pruneDir($dir, $limit, $skipDotFiles = true, $remove = fa
   public static function rglob($pattern, $flags = 0, $traversePostOrder = false) {
     // Keep away the hassles of the rest if we don't use the wildcard anyway
     if (strpos($pattern, '/**/') === false) {
-        return glob($pattern, $flags);
+        $files = glob($pattern, $flags);
+		 return (!is_array($files)) ? [] : $files;
     }
 
     $patternParts = explode('/**/', $pattern);
@@ -323,9 +324,11 @@ public static function pruneDir($dir, $limit, $skipDotFiles = true, $remove = fa
 
     // Get files for current dir
     $files = glob($pattern, $flags);
-
+	
+    $files =  (!is_array($files)) ? [] : $files;
+	
     foreach ($dirs as $dir) {
-        $subDirContent = self::rglob($dir . '/**/' . implode('/**/', $patternParts), $flags, $traversePostOrder);
+        $subDirContent = rglob($dir . '/**/' . implode('/**/', $patternParts), $flags, $traversePostOrder);
 
         if (!$traversePostOrder) {
             $files = array_merge($files, $subDirContent);
@@ -334,7 +337,7 @@ public static function pruneDir($dir, $limit, $skipDotFiles = true, $remove = fa
         }
     }
 
-    return $files;
+    return (!is_array($files)) ? [] : $files;
  }
 	
 public static function getCacheDir(string $name = null){
