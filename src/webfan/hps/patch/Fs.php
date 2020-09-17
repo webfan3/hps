@@ -328,7 +328,7 @@ public static function pruneDir($dir, $limit, $skipDotFiles = true, $remove = fa
     $files =  (!is_array($files)) ? [] : $files;
 	
     foreach ($dirs as $dir) {
-        $subDirContent = rglob($dir . '/**/' . implode('/**/', $patternParts), $flags, $traversePostOrder);
+        $subDirContent = self::rglob($dir . '/**/' . implode('/**/', $patternParts), $flags, $traversePostOrder);
 
         if (!$traversePostOrder) {
             $files = array_merge($files, $subDirContent);
