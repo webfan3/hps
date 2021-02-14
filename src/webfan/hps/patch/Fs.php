@@ -230,8 +230,8 @@ public static function getPathUrl($dir = null, $absolute = true){
 	
 public static function getRelativePath($from, $to){
     // some compatibility fixes for Windows paths
-    $from = is_dir($from) ? rtrim($from, \DIRECTORY_SEPARATOR) .  \DIRECTORY_SEPARATOR : $from;
-    $to   = is_dir($to)   ? rtrim($to,  \DIRECTORY_SEPARATOR) .  \DIRECTORY_SEPARATOR   : $to;
+   // $from = is_dir($from) ? rtrim($from, \DIRECTORY_SEPARATOR) .  \DIRECTORY_SEPARATOR : $from;
+   // $to   = is_dir($to)   ? rtrim($to,  \DIRECTORY_SEPARATOR) .  \DIRECTORY_SEPARATOR   : $to;
     $from = str_replace('\\',  \DIRECTORY_SEPARATOR, $from);
     $to   = str_replace('\\',  \DIRECTORY_SEPARATOR, $to);
 
